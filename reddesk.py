@@ -1,5 +1,6 @@
 import time
-from appscript import *
+from appscript import app, mactypes
+import argparse
 import AppKit
 import xml.etree.ElementTree as et
 import urllib
@@ -14,7 +15,6 @@ issue with timeout on download:
 try using urllib2 as noted here:
 http://www.voidspace.org.uk/python/articles/urllib2.shtml#sockets-and-layers
 """
-
 
 screenSizes = [(screen.frame().size.width, screen.frame().size.height)
     for screen in AppKit.NSScreen.screens()]
@@ -281,18 +281,30 @@ def setImgAsDesktop(image):
         print "Setting " + image['Location'] + " as desktop..."
     #'/path/to/file.jpg'
     f = image['Location'] #setAsDirectory(reddeskRoot) + image['Location']
-    app('Finder').desktop_picture.set(mactypes.File(f))
+  #  app('Finder').desktop_picture.set(mactypes.File(f))
 
-    """ # this is supposd to work for multiple desktops: (it isn't?)
+#    """ # this is supposd to work for multiple desktops: (it isn't?)
+    se = app('System Events')
+    desktops = se.desktops.display_name.get()
+    for d in desktops:
+        for desk in se.desktops.get():
+             if desk == d:
+                break
+        desk.picture.set(mactypes.File(f))
+        if debug:
+            print "Desktop background for " + d + " set to " + f
+ #   """
+
+def setImgOnAllDesktops(image):
+    parser = argparse.ArgumentParser(description='Set desktop wallpaper.')
+    parser.add_argument('file', type=file, help='File to use as wallpaper.')
+    args = parser.parse_args()
+    f = args.file
     se = app('System Events')
     desktops = se.desktops.display_name.get()
     for d in desktops:
         desk = se.desktops[its.display_name == d]
-        desk.picture.set(mactypes.File(f))
-    """
-    if debug:
-        print "Success!"
-
+        desk.picture.set(mactypes.File(f.name))
 
 def getTopRanked(images, num):
     if debug:
