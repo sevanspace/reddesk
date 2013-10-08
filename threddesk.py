@@ -4,7 +4,8 @@ import urllib2
 # Use Queue and threading for multithreading
 import Queue
 import threading
-
+# use ElementTree for building xml tree from rss feed
+from xml.etree import ElementTree as etree
 
 
 
@@ -27,8 +28,29 @@ page_parse_timeout = 5
 socket.setdefaulttimeout(timeout)
 
 
+def urlRequest(url):
+	req = urllib2.Request(url)
+	try: 
+		response = urllib2.urlopen(req)
+	except URLError, e:
+		if hasattr(e, 'reason'):
+			print 'Failed to reach server: ', req
+			print 'Reason: ', e.reason
+		elif hasattr(e, 'code'):
+			print 'The server couldn\'t fulfill the request.'
+			print 'Error code: ', e.code
+		raise e
 
+	result = response.read()
+	response.close()
+	return result
 
+def buildXmlTree(url):
+	response = urlRequest(url)
+	xmltree = etree.fromstring(response)
+	
+
+	#something
 
 def getImageLinks(subreddit):
 	# get XMLtree from url
@@ -36,10 +58,30 @@ def getImageLinks(subreddit):
 	# put links to images into imageLink queue
 
 	url = "http://www.reddit.com/r/" + subreddit + ".rss"
+
+	try:
+		data = urlRequest(url)
+
+	
 	xtree = get
 
+reddit_file = urllib2.urlopen('url')
+#convert to string:
+reddit_data = reddit_file.read()
+print reddit_data
+#close file because we dont need it anymore:
+reddit_file.close()
 
+#entire feed
+reddit_root = etree.fromstring(reddit_data)
+item = reddit_root.findall('channel/item')
+print item
 
+reddit_feed=[]
+for entry in item:   
+    #get description, url, and thumbnail
+    desc = entry.findtext('description')  
+    reddit_feed.append([desc])
 
 
 
@@ -90,7 +132,7 @@ try:
 	response = urllib2.urlopen(req)
 except URLError, e:
     if hasattr(e, 'reason'):
-    	print 'Failed to reach a server.'
+    	print 'Failed to reach server: ', req
         print 'Reason: ', e.reason
     elif hasattr(e, 'code'):
         print 'The server couldn\'t fulfill the request.'
