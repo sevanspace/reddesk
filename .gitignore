@@ -1,0 +1,4 @@
+# jpg/png/gif's in currentDesktop
+currentDestkop/*.[jJ][pP][gG]
+currentDestkop/*.[pP][nN][gG]
+currentDestkop/*.[gG][iI][fF]
