@@ -125,9 +125,17 @@ def worker(queue_start, function):
 
 # RUNNING ENGINE
 
-for i in range(image_builder_thread_count):
-	t = threading.Thread(target=worker, args=(image_q,))
-	t.start()
+def startThreads:
+	for i in range(image_builder_thread_count):
+		t = threading.Thread(target=worker, args=(image_q,))
+		t.start()
+
+
+
+
+
+
+# CP'ED CODE ------------
 
 
 #define a worker function
